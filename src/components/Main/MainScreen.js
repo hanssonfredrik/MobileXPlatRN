@@ -8,6 +8,8 @@ class MainScreen extends Component {
     this.state = {
       todos: [],
     };
+
+    this.onItemPress = this.onItemPress.bind(this);
   }
 
   componentDidMount() {
@@ -30,10 +32,15 @@ class MainScreen extends Component {
       todos: todoList,
     })
   }
+
+  onItemPress() {
+    const { navigate } = this.props.navigation;
+    navigate('ViewTodo', {name: 'Jane'})
+  }
       
   render() {
     const todoItems = this.state.todos.map(todo => (
-      <ListItem key={todo.id}>
+      <ListItem key={todo.id} onPress={this.onItemPress}>
         <Body>
           <Text>{todo.title}</Text>
           <Text note>{todo.description}</Text>

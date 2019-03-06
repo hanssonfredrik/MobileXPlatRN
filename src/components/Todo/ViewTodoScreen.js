@@ -6,8 +6,13 @@ class ViewTodoScreen extends Component {
     super(props);
 
     this.state = {
-      todos: [],
     };
+
+    this.onBackPress = this.onBackPress.bind(this);
+  }
+
+  onBackPress() {
+    this.props.navigation.goBack();
   }
       
   render() {
@@ -15,7 +20,7 @@ class ViewTodoScreen extends Component {
       <Container>
         <Header>
           <Left>
-          <Button transparent>
+          <Button transparent onPress={this.onBackPress}>
             <Icon name='arrow-back' />
           </Button>
           </Left>
