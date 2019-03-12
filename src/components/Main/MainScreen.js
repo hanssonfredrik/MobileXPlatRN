@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Body, Button, Container, Content, Header, Icon, List, ListItem, Title, Text, Right } from 'native-base';
+import { Body, Button, CheckBox, Container, Content, Header, Icon, Item, Input, List, ListItem, Switch, Title, Text, Right } from 'native-base';
+import { AsyncStorage, Modal } from 'react-native';
 
 class MainScreen extends Component {
   constructor(props) {
@@ -7,40 +8,119 @@ class MainScreen extends Component {
 
     this.state = {
       todos: [],
+      title: null,
+      description: null,
+      isCompleted: false,
+      modalVisible: false,
     };
 
     this.onItemPress = this.onItemPress.bind(this);
+    this.onAddPress = this.onAddPress.bind(this);
+    this.saveTodoItem = this.saveTodoItem.bind(this);
+    this.loadTodoItems = this.loadTodoItems.bind(this);
+    this.onIsActivatedChange = this.onIsActivatedChange.bind(this);
   }
 
-  componentDidMount() {
-    const todoList = [
-      {
-        id: 1,
-        title: 'Test1',
-        description: 'Test 1 desc',
-        isCompleted: false,
-      },
-      {
-        id: 2,
-        title: 'Test2',
-        description: 'Test 2 desc',
-        isCompleted: true,
-      }
-    ];
+  async componentDidMount() {
+    // await AsyncStorage.removeItem('todoitems');
+
+    await this.loadTodoItems();
+  }
+
+  onItemPress(todo) {
+    const { navigate } = this.props.navigation;
+    navigate('ViewTodo', { todoId: todo.todoId })
+  }
+
+  onAddPress() {
+    this.setState({
+      modalVisible: true,
+    });
+  }
+
+  onIsActivatedChange(value) {
+    this.setState({
+      isCompleted: value,
+    });
+  }
+
+  async loadTodoItems() {
+    const existingTodoItems = await AsyncStorage.getItem('todoitems');
+    let todoItems = JSON.parse(existingTodoItems);
+
+    if (!todoItems) {
+      todoItems = [];
+    }
 
     this.setState({
-      todos: todoList,
+      todos: todoItems,
     })
+
   }
 
-  onItemPress() {
-    const { navigate } = this.props.navigation;
-    navigate('ViewTodo', {name: 'Jane'})
+  async saveTodoItem() {
+    const existingTodoItems = await AsyncStorage.getItem('todoitems');
+
+    let todoItems = JSON.parse(existingTodoItems);
+    if (!todoItems) {
+      todoItems = [];
+    }
+
+    todoItems.push({
+      todoId: this.uuidv4(),
+      title: this.state.title,
+      description: this.state.description,
+      isCompleted: this.state.isCompleted,
+    });
+
+    await AsyncStorage.setItem('todoitems', JSON.stringify(todoItems));
+
+    this.setState({
+      modalVisible: false,
+    });
+
+    await this.loadTodoItems();
+  }
+
+  uuidv4() {
+    return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+      var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
+      return v.toString(16);
+    });
+  }
+
+  renderModal() {
+    return (
+      <Modal
+        animationType="slide"
+        transparent={false}
+        visible={this.state.modalVisible}
+        onRequestClose={() => {
+        }}>
+        <Content style={{ marginTop: 40, padding: 30, backgroundColor: '#EFEFEF' }}>
+          <Item>
+            <Input placeholder="Title" value={this.state.title} onChangeText={title => this.setState({ title })} />
+          </Item>
+          <Item>
+            <Input placeholder="Description" value={this.state.description} onChangeText={description => this.setState({ description })} />
+          </Item>
+          <ListItem>
+            <CheckBox checked={this.state.isCompleted} onValueChange={this.onIsActivatedChange} />
+            <Body>
+              <Text>Completed</Text>
+            </Body>
+          </ListItem>            
+          <Button onPress={this.saveTodoItem} style={{ marginTop: 20 }}>
+            <Text>Save</Text>
+          </Button>
+        </Content>
+      </Modal>
+    );
   }
       
   render() {
     const todoItems = this.state.todos.map(todo => (
-      <ListItem key={todo.id} onPress={this.onItemPress}>
+      <ListItem key={'key' + todo.todoId} onPress={() => this.onItemPress(todo) }>
         <Body>
           <Text>{todo.title}</Text>
           <Text note>{todo.description}</Text>
@@ -59,7 +139,7 @@ class MainScreen extends Component {
           </Body>
           <Right>
             <Button transparent>
-              <Icon name='add' />
+              <Icon name='add' onPress={this.onAddPress} />
             </Button>
           </Right>
         </Header>
@@ -68,6 +148,7 @@ class MainScreen extends Component {
             {todoItems}
           </List>
         </Content>
+        {this.renderModal()}
       </Container>
     );
   }

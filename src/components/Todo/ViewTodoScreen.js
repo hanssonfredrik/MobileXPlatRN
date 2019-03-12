@@ -1,14 +1,24 @@
 import React, { Component } from 'react';
 import { Body, Button, Container, Content, Header, Icon, Left, Title, Text, Right } from 'native-base';
 
-class ViewTodoScreen extends Component {
+class ViewTodoScreen extends Component {  
   constructor(props) {
     super(props);
 
-    this.state = {
-    };
 
+    this.state = {
+      todoId: null
+    };
+  
     this.onBackPress = this.onBackPress.bind(this);
+  }
+
+  async componentDidMount() {
+    const { navigation } = this.props;
+    const todoId = navigation.getParam('todoId', null);
+    this.setState({
+      todoId: todoId,
+    });
   }
 
   onBackPress() {
@@ -34,7 +44,7 @@ class ViewTodoScreen extends Component {
           </Right>
         </Header>
         <Content>
-          <Text>Test</Text>
+          <Text>{this.state.todoId}</Text>
         </Content>
       </Container>
     );
