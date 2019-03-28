@@ -1,5 +1,21 @@
 import React, { Component } from 'react';
-import { Body, Button, CheckBox, Container, Content, Header, Icon, Item, Input, List, ListItem, Switch, Title, Text, Right } from 'native-base';
+import { 
+  Body, 
+  Button, 
+  CheckBox, 
+  Container, 
+  Content, 
+  Header, 
+  Icon, 
+  Item, 
+  Input, 
+  List, 
+  ListItem, 
+  Title, 
+  Text, 
+  Right,
+  View, 
+} from 'native-base';
 import { AsyncStorage, Modal } from 'react-native';
 
 class MainScreen extends Component {
@@ -17,6 +33,7 @@ class MainScreen extends Component {
     this.onItemPress = this.onItemPress.bind(this);
     this.onAddPress = this.onAddPress.bind(this);
     this.saveTodoItem = this.saveTodoItem.bind(this);
+    this.cancelModal = this.cancelModal.bind(this);
     this.loadTodoItems = this.loadTodoItems.bind(this);
     this.onIsActivatedChange = this.onIsActivatedChange.bind(this);
   }
@@ -82,6 +99,12 @@ class MainScreen extends Component {
     await this.loadTodoItems();
   }
 
+  cancelModal() {
+    this.setState({
+      modalVisible: false,
+    });
+  }
+
   uuidv4() {
     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
       var r = Math.random() * 16 | 0, v = c == 'x' ? r : (r & 0x3 | 0x8);
@@ -109,10 +132,15 @@ class MainScreen extends Component {
             <Body>
               <Text>Completed</Text>
             </Body>
-          </ListItem>            
-          <Button onPress={this.saveTodoItem} style={{ marginTop: 20 }}>
-            <Text>Save</Text>
-          </Button>
+          </ListItem>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
+            <Button onPress={this.saveTodoItem} style={{ marginTop: 20, flex: 1, justifyContent: 'center', marginRight: 10 }}>
+              <Text>Save</Text>
+            </Button>
+            <Button onPress={this.cancelModal} style={{ marginTop: 20, flex: 1, justifyContent: 'center', backgroundColor: 'gray' }}>
+              <Text>Cancel</Text>
+            </Button>
+          </View>       
         </Content>
       </Modal>
     );
@@ -154,4 +182,4 @@ class MainScreen extends Component {
   }
 }
   
-  export default MainScreen;
+export default MainScreen;

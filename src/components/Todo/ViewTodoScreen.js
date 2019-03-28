@@ -50,5 +50,5 @@ class ViewTodoScreen extends Component {
     );
   }
 }
-  
-  export default ViewTodoScreen;
+
+export default ViewTodoScreen;
