@@ -8,11 +8,11 @@ import {
   Header, 
   Icon, 
   Item, 
-  Input, 
+  Input,
   List, 
   ListItem, 
   Title, 
-  Text, 
+  Text,
   Right,
   View, 
 } from 'native-base';
@@ -163,7 +163,7 @@ class MainScreen extends Component {
       <Container>
         <Header>
           <Body>
-            <Title>Todo items</Title>
+            <Title>Todo Test2</Title>
           </Body>
           <Right>
             <Button transparent>
